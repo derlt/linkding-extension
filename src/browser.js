@@ -17,7 +17,15 @@ export async function getCurrentTabInfo() {
 }
 
 function isFirefox() {
-  return typeof browser !== "undefined";
+  const runtime = getBrowser().runtime;
+  if (runtime && typeof runtime.getURL === "function") {
+    const extensionUrl = runtime.getURL("");
+    return extensionUrl.startsWith("moz-extension://");
+  }
+
+  return (
+    typeof navigator !== "undefined" && navigator.userAgent.includes("Firefox/")
+  );
 }
 
 function useChromeScripting() {

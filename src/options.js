@@ -13,6 +13,7 @@ export class Options extends LitElement {
     useBrowserMetadata: { type: Boolean, state: true },
     runSinglefile: { type: Boolean, state: true },
     precacheEnabled: { type: Boolean, state: true },
+    autoSaveOnClick: { type: Boolean, state: true },
     closeAddBookmarkWindowOnSave: { type: Boolean, state: true },
     closeAddBookmarkWindowOnSaveMs: { type: Number, state: true },
     isSuccess: { type: Boolean, state: true },
@@ -29,6 +30,7 @@ export class Options extends LitElement {
     this.useBrowserMetadata = false;
     this.runSinglefile = false;
     this.precacheEnabled = false;
+    this.autoSaveOnClick = false;
     this.closeAddBookmarkWindowOnSave = false;
     this.closeAddBookmarkWindowOnSaveMs = 500;
     this.isSuccess = false;
@@ -56,6 +58,7 @@ export class Options extends LitElement {
     this.useBrowserMetadata = config.useBrowserMetadata;
     this.runSinglefile = config.runSinglefile;
     this.precacheEnabled = config.precacheEnabled;
+    this.autoSaveOnClick = config.autoSaveOnClick;
     this.closeAddBookmarkWindowOnSave = config.closeAddBookmarkWindowOnSave;
     this.closeAddBookmarkWindowOnSaveMs = config.closeAddBookmarkWindowOnSaveMs;
   }
@@ -71,6 +74,7 @@ export class Options extends LitElement {
       useBrowserMetadata: this.useBrowserMetadata,
       runSinglefile: this.runSinglefile,
       precacheEnabled: this.precacheEnabled,
+      autoSaveOnClick: this.autoSaveOnClick,
       closeAddBookmarkWindowOnSave: this.closeAddBookmarkWindowOnSave,
       closeAddBookmarkWindowOnSaveMs: this.closeAddBookmarkWindowOnSaveMs,
     };
@@ -258,6 +262,24 @@ export class Options extends LitElement {
             <strong>Note:</strong> This will send the URL of all websites that
             you visit to your Linkding server, which will also be stored in the
             server logs.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input
+              type="checkbox"
+              .checked="${this.autoSaveOnClick}"
+              @change="${(e) =>
+                this.handleInputChange(e, "autoSaveOnClick")}"
+            />
+            <i class="form-icon"></i>
+            <span>Save bookmark immediately when opening the popup</span>
+          </label>
+          <div class="form-input-hint">
+            When enabled, the bookmark is saved as soon as you open the popup,
+            so you don't need to click the save button. The popup will still
+            stay open so you can edit the bookmark details afterwards.
           </div>
         </div>
 

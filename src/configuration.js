@@ -8,6 +8,7 @@ const DEFAULTS = {
   useBrowserMetadata: false,
   runSinglefile: false,
   precacheEnabled: false,
+  autoSaveOnClick: true,
   closeAddBookmarkWindowOnSave: false,
   closeAddBookmarkWindowOnSaveMs: 500,
 };

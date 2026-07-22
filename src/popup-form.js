@@ -107,6 +107,9 @@ export class PopupForm extends LitElement {
     // Initialize bookmark form
     await this.initForm();
     this.extensionConfiguration = await getConfiguration();
+
+    // Auto-save if not already bookmarked
+    await this.autoSaveIfNeeded();
   }
 
   async initForm() {
@@ -157,6 +160,49 @@ export class PopupForm extends LitElement {
       if (autoTagsList) {
         this.autoTags = autoTagsList.join(" ");
       }
+    }
+  }
+
+  async autoSaveIfNeeded() {
+    if (!this.extensionConfiguration?.autoSaveOnClick) return;
+    if (this.existingBookmark) return;
+    if (!this.url?.match(/^http(s)?:\/\//)) return;
+
+    const tagNames = (this.tags || "")
+      .split(" ")
+      .map((tag) => tag.trim())
+      .filter((tag) => !!tag);
+    const bookmark = {
+      url: this.url,
+      title: this.title || "",
+      description: this.description || "",
+      notes: this.notes,
+      tag_names: tagNames,
+      unread: this.unread,
+      shared: this.shared,
+    };
+
+    try {
+      this.saveState = "loading";
+      const saved = await this.api.saveBookmark(bookmark, {
+        disable_html_snapshot: this.extensionConfiguration?.runSinglefile,
+      });
+      this.existingBookmark = saved;
+      this.saveState = "success";
+      await clearCachedServerMetadata();
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      this.saveState = "";
+
+      if (this.extensionConfiguration?.precacheEnabled) {
+        showBadge(this.tabInfo.id);
+      }
+      if (this.extensionConfiguration?.runSinglefile) {
+        runSinglefile();
+      }
+    } catch (e) {
+      this.saveState = "error";
+      this.errorMessage = e.toString();
+      console.error(this.errorMessage);
     }
   }
 

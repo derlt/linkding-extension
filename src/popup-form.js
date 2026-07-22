@@ -43,7 +43,6 @@ export class PopupForm extends LitElement {
     extensionConfiguration: { type: Object, state: true },
     loading: { type: Boolean, state: true },
     deleteConfirmVisible: { type: Boolean, state: true },
-    justAutoSaved: { type: Boolean, state: true },
   };
 
   constructor() {
@@ -70,7 +69,6 @@ export class PopupForm extends LitElement {
     this.extensionConfiguration = null;
     this.loading = false;
     this.deleteConfirmVisible = false;
-    this.justAutoSaved = false;
   }
 
   createRenderRoot() {
@@ -195,7 +193,6 @@ export class PopupForm extends LitElement {
         disable_html_snapshot: this.extensionConfiguration?.runSinglefile,
       });
       this.existingBookmark = saved;
-      this.saveState = "success";
       await cacheServerMetadata({
         bookmark: saved,
         metadata: {
@@ -206,10 +203,7 @@ export class PopupForm extends LitElement {
         auto_tags: [],
       });
       await addUrl(this.url);
-      this.justAutoSaved = true;
-      await new Promise((resolve) => setTimeout(resolve, 1200));
       this.saveState = "";
-      this.justAutoSaved = false;
 
       if (this.extensionConfiguration?.precacheEnabled) {
         showBadge(this.tabInfo.id);
@@ -301,7 +295,9 @@ export class PopupForm extends LitElement {
       await removeUrl(this.url);
       await removeUrl(this.existingBookmark.url);
       removeBadge(this.tabInfo.id);
-      window.close();
+      this.existingBookmark = null;
+      this.saveState = "";
+      this.deleteConfirmVisible = false;
     } catch (e) {
       this.saveState = "error";
       this.errorMessage = e.toString();
@@ -355,13 +351,9 @@ export class PopupForm extends LitElement {
             />
             ${this.loading ? html`<i class="form-icon loading"></i>` : ""}
           </div>
-          ${this.existingBookmark && !this.justAutoSaved
+          ${this.existingBookmark
             ? html`
-                <div class="form-input-hint text-warning">
-                  This URL is already bookmarked. The form has been prefilled
-                  from the existing bookmark, and saving the form will update
-                  the existing bookmark.
-                </div>
+                <div class="form-input-hint text-gray">Bookmarked</div>
               `
             : ""}
         </div>

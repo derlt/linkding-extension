@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-sign:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - uses: actions/checkout@v4
 
@@ -20,16 +22,21 @@ jobs:
 
       - run: npm run build
 
+      - name: Get version
+        run: |
+          VERSION=$(grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' manifest.json | sed 's/.*: *"//;s/"//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Package extension
         run: |
           mkdir -p dist
-          zip -r dist/extension.zip \
+          zip -r "dist/linkding-$VERSION.zip" \
             manifest.json build icons options popup styles
 
       - name: Sign with Mozilla
         uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@v2
         with:
-          zipFilePath: dist/extension.zip
+          zipFilePath: "dist/linkding-${{ env.VERSION }}.zip"
           xpiFilePath: "dist/linkding-signed.xpi"
           extensionId: linkding-extension@forked
           jwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}

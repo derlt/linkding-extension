@@ -28,16 +28,17 @@ jobs:
             manifest.json build icons options popup styles
 
       - name: Sign with Mozilla
-        uses: cardinalby/webext-buildtools-firefox-sign-action@v1
+        uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@v2
         with:
           zipFilePath: "dist/linkding-*.zip"
+          xpiFilePath: "dist/linkding-signed.xpi"
           extensionId: linkding-extension@forked
-          amoJwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}
-          amoJwtSecret: ${{ secrets.AMO_JWT_SECRET }}
+          jwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}
+          jwtSecret: ${{ secrets.AMO_JWT_SECRET }}
           channel: unlisted
 
       - name: Upload signed .xpi
         uses: actions/upload-artifact@v4
         with:
           name: signed-xpi
-          path: ${{ steps.sign.outputs.signedFilePath }}
+          path: dist/linkding-signed.xpi

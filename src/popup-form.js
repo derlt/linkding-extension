@@ -42,7 +42,6 @@ export class PopupForm extends LitElement {
     tabInfo: { type: Object, state: true },
     extensionConfiguration: { type: Object, state: true },
     loading: { type: Boolean, state: true },
-    deleteConfirmVisible: { type: Boolean, state: true },
   };
 
   constructor() {
@@ -68,7 +67,6 @@ export class PopupForm extends LitElement {
     this.tabInfo = null;
     this.extensionConfiguration = null;
     this.loading = false;
-    this.deleteConfirmVisible = false;
   }
 
   createRenderRoot() {
@@ -276,14 +274,6 @@ export class PopupForm extends LitElement {
     }
   }
 
-  showDeleteConfirmation() {
-    this.deleteConfirmVisible = true;
-  }
-
-  cancelDelete() {
-    this.deleteConfirmVisible = false;
-  }
-
   async confirmDelete() {
     if (!this.existingBookmark) {
       return;
@@ -297,7 +287,7 @@ export class PopupForm extends LitElement {
       removeBadge(this.tabInfo.id);
       this.existingBookmark = null;
       this.saveState = "";
-      this.deleteConfirmVisible = false;
+      window.close();
     } catch (e) {
       this.saveState = "error";
       this.errorMessage = e.toString();
@@ -486,7 +476,7 @@ export class PopupForm extends LitElement {
                           type="button"
                           class="btn btn-error"
                           aria-label="Delete bookmark"
-                          @click="${this.showDeleteConfirmation}"
+                          @click="${this.confirmDelete}"
                         >
                           ${icons.delete()}
                         </button>
@@ -504,8 +494,6 @@ export class PopupForm extends LitElement {
             : ""}
         </div>
       </form>
-
-      ${this.deleteConfirmVisible ? this.renderDeleteConfirmation() : nothing}
     `;
   }
 
@@ -527,36 +515,6 @@ export class PopupForm extends LitElement {
       >
         ${icons.externalLink()}
       </button>
-    `;
-  }
-
-  renderDeleteConfirmation() {
-    return html`
-      <div class="modal active">
-        <div class="modal-overlay"></div>
-        <div class="modal-container">
-          <div class="modal-header">
-            <h2 class="h6">Delete bookmark?</h2>
-          </div>
-          <div class="modal-body">
-            <div class="content">
-              Are you sure you want to delete this bookmark?
-            </div>
-          </div>
-          <div class="modal-footer d-flex justify-between mt-2">
-            <button type="button" class="btn" @click="${this.cancelDelete}">
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="btn btn-error"
-              @click="${this.confirmDelete}"
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
-      </div>
     `;
   }
 }

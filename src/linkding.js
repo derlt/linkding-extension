@@ -155,7 +155,7 @@ export class LinkdingApi {
   async getAllBookmarkUrls() {
     const configuration = this.configuration;
     const urls = [];
-    const limit = 1000;
+    const limit = 5000;
     let offset = 0;
     while (true) {
       const response = await fetch(

@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "linkding extension",
-  "version": "1.15.1",
+  "version": "0.1.0",
   "description": "Companion extension for the linkding bookmark service",
-  "homepage_url": "https://github.com/sissbruecker/linkding-extension/",
+  "homepage_url": "https://github.com/derlt/linkding-extension/",
 
   "icons": {
     "48": "icons/logo_48x48.png",
@@ -40,6 +40,12 @@
 
   "options_ui": {
     "page": "options/index.html"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "linkding-extension@forked"
+    }
   },
 
   "permissions": [

@@ -1,0 +1,43 @@
+name: Build and sign for internal use
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          VERSION=$(grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' manifest.json | sed 's/.*: *"//;s/"//')
+          zip -r "dist/linkding-$VERSION.zip" \
+            manifest.json build icons options popup styles
+
+      - name: Sign with Mozilla
+        uses: cardinalby/webext-buildtools-firefox-sign-action@v1
+        with:
+          zipFilePath: "dist/linkding-*.zip"
+          extensionId: linkding-extension@forked
+          amoJwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}
+          amoJwtSecret: ${{ secrets.AMO_JWT_SECRET }}
+          channel: unlisted
+
+      - name: Upload signed .xpi
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-xpi
+          path: ${{ steps.sign.outputs.signedFilePath }}

@@ -1,7 +1,7 @@
 import { getStorageItem, setStorageItem } from "./browser";
 import { getConfiguration, isConfigurationComplete } from "./configuration";
 import { LinkdingApi } from "./linkding";
-import { isBookmarked } from "./url-index";
+import { isBookmarked, seedFromServer, getSeededAt } from "./url-index";
 
 const SERVER_METADATA_CACHE_KEY = "ld_server_metadata_cache";
 
@@ -34,6 +34,11 @@ export async function loadServerMetadata(url, precacheRequest = false) {
 
   // Popup path: fetch full metadata from server
   const api = new LinkdingApi(configuration);
+
+  if (await getSeededAt() === 0) {
+    seedFromServer(api).catch(() => {});
+  }
+
   try {
     const tabMetadata = await api.check(url);
     // Linkding <v1.17 does not return full bookmark data from check API

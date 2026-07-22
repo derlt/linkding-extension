@@ -23,14 +23,13 @@ jobs:
       - name: Package extension
         run: |
           mkdir -p dist
-          VERSION=$(grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' manifest.json | sed 's/.*: *"//;s/"//')
-          zip -r "dist/linkding-$VERSION.zip" \
+          zip -r dist/extension.zip \
             manifest.json build icons options popup styles
 
       - name: Sign with Mozilla
         uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@v2
         with:
-          zipFilePath: "dist/linkding-*.zip"
+          zipFilePath: dist/extension.zip
           xpiFilePath: "dist/linkding-signed.xpi"
           extensionId: linkding-extension@forked
           jwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}

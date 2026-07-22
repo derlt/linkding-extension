@@ -9,7 +9,11 @@ import {
   removeBadge,
   createTab,
 } from "./browser.js";
-import { loadServerMetadata, clearCachedServerMetadata } from "./cache.js";
+import {
+  loadServerMetadata,
+  clearCachedServerMetadata,
+  cacheServerMetadata,
+} from "./cache.js";
 import { getProfile, updateProfile } from "./profile.js";
 import { getConfiguration } from "./configuration.js";
 import { icons } from "./icons";
@@ -38,6 +42,7 @@ export class PopupForm extends LitElement {
     extensionConfiguration: { type: Object, state: true },
     loading: { type: Boolean, state: true },
     deleteConfirmVisible: { type: Boolean, state: true },
+    justAutoSaved: { type: Boolean, state: true },
   };
 
   constructor() {
@@ -64,6 +69,7 @@ export class PopupForm extends LitElement {
     this.extensionConfiguration = null;
     this.loading = false;
     this.deleteConfirmVisible = false;
+    this.justAutoSaved = false;
   }
 
   createRenderRoot() {
@@ -189,9 +195,19 @@ export class PopupForm extends LitElement {
       });
       this.existingBookmark = saved;
       this.saveState = "success";
-      await clearCachedServerMetadata();
+      await cacheServerMetadata({
+        bookmark: saved,
+        metadata: {
+          url: this.url,
+          title: this.title,
+          description: this.description,
+        },
+        auto_tags: [],
+      });
+      this.justAutoSaved = true;
       await new Promise((resolve) => setTimeout(resolve, 1200));
       this.saveState = "";
+      this.justAutoSaved = false;
 
       if (this.extensionConfiguration?.precacheEnabled) {
         showBadge(this.tabInfo.id);
@@ -334,7 +350,7 @@ export class PopupForm extends LitElement {
             />
             ${this.loading ? html`<i class="form-icon loading"></i>` : ""}
           </div>
-          ${this.existingBookmark
+          ${this.existingBookmark && !this.justAutoSaved
             ? html`
                 <div class="form-input-hint text-warning">
                   This URL is already bookmarked. The form has been prefilled

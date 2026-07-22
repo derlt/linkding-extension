@@ -16,6 +16,7 @@ import {
 } from "./cache.js";
 import { getProfile, updateProfile } from "./profile.js";
 import { getConfiguration } from "./configuration.js";
+import { addUrl, removeUrl } from "./url-index.js";
 import { icons } from "./icons";
 
 export class PopupForm extends LitElement {
@@ -204,6 +205,7 @@ export class PopupForm extends LitElement {
         },
         auto_tags: [],
       });
+      await addUrl(this.url);
       this.justAutoSaved = true;
       await new Promise((resolve) => setTimeout(resolve, 1200));
       this.saveState = "";
@@ -247,6 +249,7 @@ export class PopupForm extends LitElement {
       await clearCachedServerMetadata();
 
       this.saveState = "success";
+      await addUrl(this.url);
 
       // Show star badge on the tab to indicate that it's now bookmarked
       // but only if precaching is enabled, since the badge will never
@@ -295,6 +298,8 @@ export class PopupForm extends LitElement {
     try {
       await this.api.deleteBookmark(this.existingBookmark.id);
       await clearCachedServerMetadata();
+      await removeUrl(this.url);
+      await removeUrl(this.existingBookmark.url);
       removeBadge(this.tabInfo.id);
       window.close();
     } catch (e) {

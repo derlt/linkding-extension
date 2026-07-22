@@ -8,6 +8,7 @@ import {
 import { loadServerMetadata } from "./cache";
 import { getConfiguration, isConfigurationComplete } from "./configuration";
 import { LinkdingApi } from "./linkding";
+import { addUrl, seedFromServer, getSeededAt } from "./url-index";
 
 const browser = getBrowser();
 let api = null;
@@ -30,6 +31,21 @@ async function initApi() {
 
   return api !== null;
 }
+
+const SEED_INTERVAL = 24 * 60 * 60 * 1000;
+
+async function maybeSeed() {
+  const ready = await initApi();
+  if (!ready) return;
+  const lastSeed = await getSeededAt();
+  if (Date.now() - lastSeed > SEED_INTERVAL) {
+    seedFromServer(api).catch((err) =>
+      console.error("Failed to seed bookmark URL index", err),
+    );
+  }
+}
+
+browser.runtime.onStartup.addListener(maybeSeed);
 
 /* Dynamic badge */
 async function setDynamicBadge(tabId, tabMetadata) {
@@ -131,6 +147,7 @@ browser.runtime.onInstalled.addListener(() => {
     title: "Save to linkding",
     contexts: ["link"],
   });
+  maybeSeed();
 });
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -168,6 +185,7 @@ async function saveToLinkding(url) {
     };
 
     await api.saveBookmark(bookmark);
+    await addUrl(url);
 
     // Show success badge temporarily
     const currentTab = await getCurrentTabInfo();

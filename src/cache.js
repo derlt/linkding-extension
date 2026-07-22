@@ -1,13 +1,11 @@
 import { getStorageItem, setStorageItem } from "./browser";
 import { getConfiguration, isConfigurationComplete } from "./configuration";
 import { LinkdingApi } from "./linkding";
+import { isBookmarked } from "./url-index";
 
 const SERVER_METADATA_CACHE_KEY = "ld_server_metadata_cache";
 
 export async function loadServerMetadata(url, precacheRequest = false) {
-  // the function should be called with precacheRequest = true
-  // anytime before the user has consciously decided to bookmark it.
-  // see https://github.com/sissbruecker/linkding-extension/issues/36
   const configuration = await getConfiguration();
   const hasCompleteConfiguration = isConfigurationComplete(configuration);
 
@@ -22,23 +20,31 @@ export async function loadServerMetadata(url, precacheRequest = false) {
     return cachedMetadata;
   }
 
-  if (configuration.precacheEnabled || !precacheRequest) {
-    // Load metadata if not cached
-    const api = new LinkdingApi(configuration);
-    try {
-      const tabMetadata = await api.check(url);
-      // Linkding <v1.17 does not return full bookmark data from check API
-      // In that case fetch the bookmark with a separate request
-      if (tabMetadata.bookmark && !tabMetadata.bookmark.date_added) {
-        tabMetadata.bookmark = await api.getBookmark(tabMetadata.bookmark.id);
-      }
-      await cacheServerMetadata(tabMetadata);
-      return tabMetadata;
-    } catch (e) {
-      console.error(e);
-      return null;
+  if (precacheRequest) {
+    // Badge path: use local index, never contacts the server
+    if (await isBookmarked(url)) {
+      return {
+        bookmark: { url },
+        metadata: { url, title: "", description: "" },
+        auto_tags: [],
+      };
     }
-  } else {
+    return null;
+  }
+
+  // Popup path: fetch full metadata from server
+  const api = new LinkdingApi(configuration);
+  try {
+    const tabMetadata = await api.check(url);
+    // Linkding <v1.17 does not return full bookmark data from check API
+    // In that case fetch the bookmark with a separate request
+    if (tabMetadata.bookmark && !tabMetadata.bookmark.date_added) {
+      tabMetadata.bookmark = await api.getBookmark(tabMetadata.bookmark.id);
+    }
+    await cacheServerMetadata(tabMetadata);
+    return tabMetadata;
+  } catch (e) {
+    console.error(e);
     return null;
   }
 }

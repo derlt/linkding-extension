@@ -151,4 +151,31 @@ export class LinkdingApi {
       .then((body) => !!body.results)
       .catch(() => false);
   }
+
+  async getAllBookmarkUrls() {
+    const configuration = this.configuration;
+    const urls = [];
+    const limit = 1000;
+    let offset = 0;
+    while (true) {
+      const response = await fetch(
+        `${configuration.baseUrl}/api/bookmarks/?limit=${limit}&offset=${offset}`,
+        {
+          headers: {
+            Authorization: `Token ${configuration.token}`,
+          },
+        },
+      );
+      if (response.status !== 200) {
+        return Promise.reject(
+          `Error fetching bookmarks: ${response.statusText}`,
+        );
+      }
+      const body = await response.json();
+      urls.push(...body.results.map((b) => b.url));
+      if (body.results.length < limit) break;
+      offset += limit;
+    }
+    return urls;
+  }
 }

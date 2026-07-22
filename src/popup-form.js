@@ -128,6 +128,10 @@ export class PopupForm extends LitElement {
 
     this.loading = false;
 
+    if (!serverMetadata) {
+      return;
+    }
+
     if (this.configuration.useBrowserMetadata) {
       this.title = browserMetadata.title;
       this.description = browserMetadata.description;
@@ -138,11 +142,6 @@ export class PopupForm extends LitElement {
 
     this.shared = this.configuration.shareSelected;
     this.unread = this.configuration.unreadSelected;
-
-    // If the bookmark already exists, prefill the form with the existing bookmark
-    if (!serverMetadata) {
-      return;
-    }
 
     const existingBookmark = serverMetadata.bookmark;
     if (existingBookmark) {

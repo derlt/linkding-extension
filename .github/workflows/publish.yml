@@ -33,10 +33,15 @@ jobs:
           zip -r "dist/linkding-$VERSION.zip" \
             manifest.json build icons options popup styles
 
+      - name: Package source for review
+        run: |
+          git archive --format=zip -o "dist/linkding-$VERSION-src.zip" HEAD
+
       - name: Sign with Mozilla
         uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@v2
         with:
           zipFilePath: "dist/linkding-${{ env.VERSION }}.zip"
+          sourcesZipFilePath: "dist/linkding-${{ env.VERSION }}-src.zip"
           xpiFilePath: "dist/linkding-signed.xpi"
           extensionId: linkding-extension@forked
           jwtIssuer: ${{ secrets.AMO_JWT_ISSUER }}

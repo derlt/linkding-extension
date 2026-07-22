@@ -48,7 +48,14 @@ jobs:
           jwtSecret: ${{ secrets.AMO_JWT_SECRET }}
           channel: unlisted
 
-      - name: Upload signed .xpi
+      - name: Attach signed .xpi to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/linkding-signed.xpi
+
+      - name: Upload signed .xpi as artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           name: signed-xpi

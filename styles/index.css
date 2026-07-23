@@ -81,3 +81,190 @@ body {
   /* Override responsive styles that change font-size on inputs */
   font-size: var(--font-size) !important;
 }
+
+.tabs-form {
+  form {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-group {
+    margin-bottom: var(--unit-3) !important;
+  }
+
+  .form-group .form-label {
+    margin-bottom: var(--unit-1) !important;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-start;
+    padding-bottom: var(--unit-2);
+    border-bottom: solid 1px var(--secondary-border-color);
+
+    button {
+      padding: 0;
+      height: auto;
+    }
+  }
+
+  .footer {
+    padding-top: var(--unit-4);
+    border-top: solid 1px var(--secondary-border-color);
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--unit-2);
+  }
+}
+
+.tab-list {
+  border: solid 1px var(--border-color);
+  border-radius: var(--border-radius);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.tab-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--unit-2);
+  padding: var(--unit-1) var(--unit-2);
+  border-bottom: solid 1px var(--secondary-border-color);
+}
+
+.tab-list-item:last-child {
+  border-bottom: none;
+}
+
+.tab-favicon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tab-favicon-placeholder {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--icon-color);
+}
+
+.tab-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+}
+
+.tab-remove {
+  padding: 0;
+  height: auto;
+  color: var(--icon-color);
+  flex-shrink: 0;
+}
+
+.tab-remove:hover {
+  color: var(--error-color);
+}
+
+.bundle-select {
+  position: relative;
+}
+
+.bundle-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--control-size);
+  padding: var(--unit-1) var(--unit-2);
+  background: var(--input-bg-color);
+  border: solid 1px var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  font-size: var(--font-size);
+  font-family: inherit;
+  line-height: var(--line-height);
+  cursor: pointer;
+}
+
+.bundle-select-trigger:focus {
+  outline: var(--focus-outline);
+  outline-offset: calc(var(--focus-outline-offset) * -1);
+}
+
+.bundle-select-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag-chips-input {
+  position: relative;
+}
+
+.tag-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--unit-1);
+  padding: var(--unit-1);
+  min-height: var(--control-size);
+  height: auto;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--unit-1);
+  background: var(--primary-color-shade);
+  color: var(--primary-text-color);
+  border-radius: var(--border-radius);
+  padding: 0 var(--unit-1);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.tag-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.tag-chip-remove:hover {
+  opacity: 1;
+}
+
+.tag-chips-text-input {
+  flex: 1 0 80px;
+  min-width: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  padding: 0;
+  margin: 0;
+  color: var(--text-color);
+}
+
+.tag-chips-text-input::placeholder {
+  color: var(--secondary-text-color);
+}

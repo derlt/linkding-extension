@@ -4,6 +4,7 @@ Companion extension for the self-hosted [linkding](https://github.com/sissbrueck
 
 **Features**
 - Quickly add a bookmark for the current tab (keyboard shortcut: <kbd>Alt</kbd><kbd>Shift</kbd><kbd>L</kbd>)
+- Save all open tabs at once into a bundle/collection with tags, optionally closing the tabs afterwards
 - Search bookmarks through the Omnibox / address bar (keyword: <kbd>ld</kbd>)
 
 Works with: Firefox, Chrome

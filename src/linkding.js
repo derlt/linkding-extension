@@ -152,6 +152,46 @@ export class LinkdingApi {
       .catch(() => false);
   }
 
+  async getBundles() {
+    const configuration = this.configuration;
+
+    return fetch(`${configuration.baseUrl}/api/bundles/?limit=5000`, {
+      headers: {
+        Authorization: `Token ${configuration.token}`,
+      },
+    }).then((response) => {
+      if (response.status === 200) {
+        return response.json().then((body) => body.results);
+      }
+      return Promise.reject(`Error loading bundles: ${response.statusText}`);
+    });
+  }
+
+  async createBundle(bundle) {
+    const configuration = this.configuration;
+
+    return fetch(`${configuration.baseUrl}/api/bundles/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${configuration.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bundle),
+    }).then((response) => {
+      if (response.status === 201) {
+        return response.json();
+      } else if (response.status === 400) {
+        return response
+          .json()
+          .then((body) =>
+            Promise.reject(`Validation error: ${JSON.stringify(body)}`),
+          );
+      } else {
+        return Promise.reject(`Request error: ${response.statusText}`);
+      }
+    });
+  }
+
   async getAllBookmarkUrls() {
     const configuration = this.configuration;
     const urls = [];

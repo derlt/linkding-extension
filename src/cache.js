@@ -35,7 +35,7 @@ export async function loadServerMetadata(url, precacheRequest = false) {
   // Popup path: fetch full metadata from server
   const api = new LinkdingApi(configuration);
 
-  if (await getSeededAt() === 0) {
+  if ((await getSeededAt()) === 0) {
     seedFromServer(api).catch(() => {});
   }
 

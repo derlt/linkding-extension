@@ -178,6 +178,31 @@ export function runSinglefile() {
   browser.runtime.sendMessage(extensionId, "save-page");
 }
 
+export async function getAllTabsInfo() {
+  const tabs = await getBrowser().tabs.query({ currentWindow: true });
+  const seenUrls = new Set();
+  const result = [];
+
+  for (const tab of tabs) {
+    if (!tab.url || !/^https?:\/\//i.test(tab.url)) continue;
+    if (seenUrls.has(tab.url)) continue;
+    seenUrls.add(tab.url);
+    result.push({
+      id: tab.id,
+      url: tab.url,
+      title: tab.title || tab.url,
+      favIconUrl: tab.favIconUrl || "",
+    });
+  }
+
+  return result;
+}
+
+export function closeTabs(tabIds) {
+  if (!tabIds || tabIds.length === 0) return Promise.resolve();
+  return getBrowser().tabs.remove(tabIds);
+}
+
 export function createTab(url) {
   const browser = getBrowser();
   browser.tabs.create({ url });

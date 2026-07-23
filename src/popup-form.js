@@ -341,9 +341,7 @@ export class PopupForm extends LitElement {
             ${this.loading ? html`<i class="form-icon loading"></i>` : ""}
           </div>
           ${this.existingBookmark
-            ? html`
-                <div class="form-input-hint text-gray">Bookmarked</div>
-              `
+            ? html` <div class="form-input-hint text-gray">Bookmarked</div> `
             : ""}
         </div>
         <div class="form-group">
@@ -498,6 +496,26 @@ export class PopupForm extends LitElement {
 
   renderHeaderActions() {
     return html`
+      ${this.api
+        ? html`
+            <button
+              type="button"
+              class="btn btn-link"
+              @click="${(e) => {
+                e.preventDefault();
+                this.dispatchEvent(
+                  new CustomEvent("show-tabs", {
+                    bubbles: true,
+                    composed: true,
+                  }),
+                );
+              }}"
+              title="Save tabs"
+            >
+              ${icons.tabs()}
+            </button>
+          `
+        : nothing}
       <button
         type="button"
         class="btn btn-link ml-auto"

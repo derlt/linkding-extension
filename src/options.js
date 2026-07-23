@@ -270,8 +270,7 @@ export class Options extends LitElement {
             <input
               type="checkbox"
               .checked="${this.autoSaveOnClick}"
-              @change="${(e) =>
-                this.handleInputChange(e, "autoSaveOnClick")}"
+              @change="${(e) => this.handleInputChange(e, "autoSaveOnClick")}"
             />
             <i class="form-icon"></i>
             <span>Save bookmark immediately when opening the popup</span>
